@@ -5,9 +5,20 @@ import { DISCLOSED_RESULT, disclose } from "./disclosure.js";
 interface OpenClawApi {
   pluginConfig: Record<string, unknown>;
   logger: { info: (...a: unknown[]) => void; error: (...a: unknown[]) => void };
-  on: (event: string, handler: (e: Record<string, unknown>, ctx: Record<string, unknown>) => void) => void;
-  registerTool: (def: { name: string; description: string; input_schema: unknown; handler: (input: Record<string, unknown>) => unknown }) => void;
-  registerSlashCommand: (def: { id: string; run: (args: string[]) => Promise<{ text: string }> }) => void;
+  on: (
+    event: string,
+    handler: (e: Record<string, unknown>, ctx: Record<string, unknown>) => void,
+  ) => void;
+  registerTool: (def: {
+    name: string;
+    description: string;
+    input_schema: unknown;
+    handler: (input: Record<string, unknown>) => unknown;
+  }) => void;
+  registerSlashCommand: (def: {
+    id: string;
+    run: (args: string[]) => Promise<{ text: string }>;
+  }) => void;
   registerService: (def: { id: string; start: () => void; stop: () => void }) => void;
   registerCli?: (def: { id: string; help: string; run: (args: string[]) => Promise<void> }) => void;
 }
@@ -22,10 +33,12 @@ function dateArg(arg: string | undefined, now: Date): string {
   const a = (arg ?? "today").trim().toLowerCase();
   if (a === "today") return now.toISOString().slice(0, 10);
   if (a === "yesterday") {
-    const d = new Date(now); d.setUTCDate(d.getUTCDate() - 1);
+    const d = new Date(now);
+    d.setUTCDate(d.getUTCDate() - 1);
     return d.toISOString().slice(0, 10);
   }
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(a)) throw new Error(`expected today|yesterday|YYYY-MM-DD, got ${arg}`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(a))
+    throw new Error(`expected today|yesterday|YYYY-MM-DD, got ${arg}`);
   return a;
 }
 
@@ -58,9 +71,12 @@ export default {
     for (const name of ["evidence_verify", "evidence_dossier", "evidence_replay"] as const) {
       api.registerTool({
         name,
-        description: `(Alpha: stubbed-and-disclosed. See STATUS.md.)`,
+        description: "(Alpha: stubbed-and-disclosed. See STATUS.md.)",
         input_schema: { type: "object", properties: {}, additionalProperties: true },
-        handler: () => { disclose(name, api.logger); return DISCLOSED_RESULT; },
+        handler: () => {
+          disclose(name, api.logger);
+          return DISCLOSED_RESULT;
+        },
       });
     }
 
@@ -74,7 +90,7 @@ export default {
             text: [
               `Verified Activity Record — ${date}`,
               `Container: ${tag}`,
-              `Build state: alpha · capture pipeline pending ghosthash`,
+              "Build state: alpha · capture pipeline pending ghosthash",
               `URL: ${url}`,
               `Disclosure: ${BASE_URL}/status`,
             ].join("\n"),
@@ -89,27 +105,32 @@ export default {
       api.registerCli({
         id: "evidence setup",
         help: "Show setup disclosure (alpha)",
-        run: async () => { disclose("evidence setup", api.logger); },
+        run: async () => {
+          disclose("evidence setup", api.logger);
+        },
       });
       api.registerCli({
         id: "evidence status",
         help: "Show plugin status",
         run: async () => {
-          console.log([
-            "openclaw-evidence v0.1.0-alpha.0",
-            `container: ${tag}`,
-            "build state: scaffold_complete",
-            "capture pipeline: PENDING ghosthash",
-            "ingest target: not configured (would be sandbox)",
-            "see STATUS.md or https://github.com/adam-scott-thomas/ghostlogic-openclaw-evidence",
-          ].join("\n"));
+          console.log(
+            [
+              "openclaw-evidence v0.1.0-alpha.0",
+              `container: ${tag}`,
+              "build state: scaffold_complete",
+              "capture pipeline: PENDING ghosthash",
+              "ingest target: not configured (would be sandbox)",
+              "see STATUS.md or https://github.com/adam-scott-thomas/ghostlogic-openclaw-evidence",
+            ].join("\n"),
+          );
         },
       });
     }
 
     api.registerService({
       id: "openclaw-evidence",
-      start: () => api.logger.info("openclaw-evidence v0.1.0-alpha.0 registered (stubbed + disclosed)"),
+      start: () =>
+        api.logger.info("openclaw-evidence v0.1.0-alpha.0 registered (stubbed + disclosed)"),
       stop: () => api.logger.info("openclaw-evidence stopped"),
     });
   },
