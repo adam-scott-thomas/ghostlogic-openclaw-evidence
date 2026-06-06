@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ghostlogic/ghostseal": "1.1.0-alpha.0"
+    "@ghostlogic/ghostseal": "1.0.0-alpha.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.0",
