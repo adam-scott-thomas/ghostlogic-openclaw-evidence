@@ -1,0 +1,46 @@
+{
+  "id": "openclaw-evidence",
+  "kind": "evidence",
+  "contracts": {
+    "tools": ["evidence_record", "evidence_verify", "evidence_dossier", "evidence_replay"]
+  },
+  "uiHints": {
+    "apiKey": {
+      "label": "GhostLogic API Key",
+      "sensitive": true,
+      "placeholder": "gl_agent_...",
+      "help": "Your key from console.ghostlogic.tech (or env GHOSTLOGIC_OPENCLAW_API_KEY)"
+    },
+    "containerTag": {
+      "label": "Evidence Container",
+      "placeholder": "openclaw_{install_id}",
+      "help": "Namespace under which this device's evidence is sealed.",
+      "advanced": true
+    },
+    "ingestUrl": {
+      "label": "Ingest URL",
+      "placeholder": "https://api.ghostlogic.tech/api/v1/ingest",
+      "advanced": true
+    },
+    "captureMode": {
+      "label": "Capture Mode",
+      "help": "'all' (default) = every turn sealed · 'verdict-only' = only decisions/tool-calls",
+      "advanced": true
+    },
+    "capsuleWindowMinutes": { "label": "Capsule Window", "placeholder": "5", "advanced": true },
+    "debug": { "label": "Debug Logging", "advanced": true }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "apiKey": { "type": "string" },
+      "containerTag": { "type": "string" },
+      "ingestUrl": { "type": "string", "format": "uri" },
+      "captureMode": { "type": "string", "enum": ["all", "verdict-only"] },
+      "capsuleWindowMinutes": { "type": "number", "minimum": 1, "maximum": 60 },
+      "debug": { "type": "boolean" }
+    },
+    "required": []
+  }
+}
